@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'noticia.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'pages/sobre_page.dart';
+import 'pages/servicos_page.dart';
+import 'pages/contato_page.dart';
 
 
 void main() {
@@ -115,11 +119,44 @@ class _NoticiasPageState extends State<NoticiasPage> {
     return Scaffold(
       body: Column(
         children: [
-          Image.asset(
-            'assets/banner.png',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 150,
+          FutureBuilder<List<Noticia>>(
+            future: _futureNoticias,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text('Nenhuma notícia disponível.'));
+              } else {
+                final noticias = snapshot.data!;
+                final imageUrls = noticias
+                    .where((noticia) => noticia.imageUrl != null)
+                    .map((noticia) => noticia.imageUrl!)
+                    .toList();
+
+                return CarouselSlider(
+                  options: CarouselOptions(
+                    height: 200,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    aspectRatio: 16 / 9,
+                    viewportFraction: 0.8,
+                  ),
+                  items: imageUrls.map((imageUrl) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        );
+                      },
+                    );
+                  }).toList(),
+                );
+              }
+            },
           ),
           Expanded(
             child: FutureBuilder<List<Noticia>>(
@@ -133,13 +170,19 @@ class _NoticiasPageState extends State<NoticiasPage> {
                   return const Center(child: Text('Nenhuma notícia disponível.'));
                 } else {
                   final noticias = snapshot.data!;
-                  return ListView.builder(
+                  return GridView.builder(
                     padding: const EdgeInsets.all(10),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 0.75,
+                    ),
                     itemCount: noticias.length,
                     itemBuilder: (context, index) {
                       final noticia = noticias[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      return Card(
+                        elevation: 5,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -148,24 +191,31 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                     noticia.imageUrl!,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
-                                    height: 150,
+                                    height: 100,
                                   )
                                 : Container(), // Placeholder se não houver imagem
                             const SizedBox(height: 10),
-                            Text(
-                              noticia.name,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blueAccent,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                noticia.name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blueAccent,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 5),
-                            Text(
-                              noticia.description,
-                              style: const TextStyle(fontSize: 16),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                noticia.description,
+                                style: const TextStyle(fontSize: 14),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            const Divider(color: Colors.blueAccent),
                           ],
                         ),
                       );
@@ -174,117 +224,6 @@ class _NoticiasPageState extends State<NoticiasPage> {
                 }
               },
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SobrePage extends StatelessWidget {
-  const SobrePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Sobre a Assistência Social de Bebedouro',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          const Divider(color: Colors.blueAccent),
-          const SizedBox(height: 10),
-          Image.asset(
-            'assets/sobre.png',
-            height: 200,
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'A Secretaria Municipal de Promoção e Assistência Social de Bebedouro é responsável pela gestão da política de assistência social no município, '
-            'atuando na promoção de serviços, programas, projetos e benefícios voltados para a melhoria da qualidade de vida das pessoas em situação de vulnerabilidade social. '
-            'A secretaria desenvolve ações que visam garantir a proteção social básica e especial, atendendo crianças, adolescentes, idosos, pessoas com deficiência e famílias em situação de risco.',
-            style: TextStyle(fontSize: 18, color: Colors.black87),
-            textAlign: TextAlign.justify,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ServicosPage extends StatelessWidget {
-  const ServicosPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Serviços Oferecidos',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          const Divider(color: Colors.blueAccent),
-          const SizedBox(height: 10),
-          Image.asset(
-            'assets/servicos.png',
-            height: 200,
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'A Secretaria de Promoção e Assistência Social de Bebedouro oferece diversos serviços para atender a população em situação de vulnerabilidade social, incluindo:\n\n'
-            '- **CRAS (Centro de Referência de Assistência Social)**: atendimento e acompanhamento familiar, atividades socioeducativas, programas de transferência de renda, entre outros.\n'
-            '- **CREAS (Centro de Referência Especializado de Assistência Social)**: atendimento especializado para famílias e indivíduos em situação de risco pessoal e social, por violação de direitos.\n'
-            '- **Serviço de Convivência e Fortalecimento de Vínculos**: atividades para diferentes faixas etárias com o objetivo de fortalecer vínculos familiares e comunitários.\n'
-            '- **Benefícios Eventuais**: auxílio para situações de vulnerabilidade temporária, como cestas básicas, auxílio funeral, entre outros.',
-            style: TextStyle(fontSize: 18, color: Colors.black87),
-            textAlign: TextAlign.justify,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ContatoPage extends StatelessWidget {
-  const ContatoPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Entre em Contato Conosco',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          const Divider(color: Colors.blueAccent),
-          const SizedBox(height: 10),
-          Image.asset(
-            'assets/contato.png',
-            height: 200,
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Se você precisa de mais informações sobre os serviços da Secretaria Municipal de Promoção e Assistência Social de Bebedouro, entre em contato conosco pelos canais abaixo:\n\n'
-            '**Endereço**: Av. Pedro Cavalini, 1403, Centro - Bebedouro/SP\n\n'
-            '**Telefone**: (17) 3343-3300\n\n'
-            '**E-mail**: assistenciasocial@bebedouro.sp.gov.br',
-            style: TextStyle(fontSize: 18, color: Colors.black87),
-            textAlign: TextAlign.justify,
           ),
         ],
       ),
