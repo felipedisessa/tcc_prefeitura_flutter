@@ -1,3 +1,5 @@
+// main.dart
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'noticia.dart';
@@ -5,7 +7,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'pages/sobre_page.dart';
 import 'pages/servicos_page.dart';
 import 'pages/contato_page.dart';
-
+import 'pages/noticia_detalhes_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Assistência Social Bebedouro',
+      title: 'AS Bebedouro',
       theme: ThemeData(
         primaryColor: Colors.blue,
         primarySwatch: Colors.blue,
@@ -50,7 +52,16 @@ class HomePage extends StatelessWidget {
                 height: 40,
               ),
               const SizedBox(width: 10),
-              const Text('Assistência Social Bebedouro'),
+              Flexible(
+                child: Text(
+                  'AS Bebedouro',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
           backgroundColor: Colors.blueAccent,
@@ -77,8 +88,8 @@ class HomePage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              '© 2024 Assistência Social Bebedouro',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              '© 2024 AS Bebedouro',
+              style: const TextStyle(color: Colors.white, fontSize: 16),
               textAlign: TextAlign.center,
             ),
           ),
@@ -105,12 +116,16 @@ class _NoticiasPageState extends State<NoticiasPage> {
   }
 
   Future<List<Noticia>> fetchNoticias() async {
-    final response = await Dio().get('http://127.0.0.1:8000/noticias');
-    if (response.statusCode == 200) {
-      List<dynamic> data = response.data;
-      return data.map((json) => Noticia.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load noticias');
+    try {
+      final response = await Dio().get('http://127.0.0.1:8000/noticias');
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        return data.map((json) => Noticia.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load noticias');
+      }
+    } catch (e) {
+      throw Exception('Error fetching noticias: $e');
     }
   }
 
@@ -135,25 +150,31 @@ class _NoticiasPageState extends State<NoticiasPage> {
                     .map((noticia) => noticia.imageUrl!)
                     .toList();
 
-                return CarouselSlider(
-                  options: CarouselOptions(
-                    height: 200,
-                    autoPlay: true,
-                    enlargeCenterPage: true,
-                    aspectRatio: 16 / 9,
-                    viewportFraction: 0.8,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      height: 200,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                      aspectRatio: 16 / 9,
+                      viewportFraction: 0.8,
+                    ),
+                    items: imageUrls.map((imageUrl) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
                   ),
-                  items: imageUrls.map((imageUrl) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        );
-                      },
-                    );
-                  }).toList(),
                 );
               }
             },
@@ -176,47 +197,55 @@ class _NoticiasPageState extends State<NoticiasPage> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
-                      childAspectRatio: 0.75,
+                      childAspectRatio: 1.0, // Proporção 1:1 (quadrado)
                     ),
                     itemCount: noticias.length,
                     itemBuilder: (context, index) {
                       final noticia = noticias[index];
-                      return Card(
-                        elevation: 5,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            noticia.imageUrl != null
-                                ? Image.network(
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NoticiaDetalhesPage(noticia: noticia),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                  child: Image.network(
                                     noticia.imageUrl!,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
-                                    height: 100,
-                                  )
-                                : Container(), // Placeholder se não houver imagem
-                            const SizedBox(height: 10),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                noticia.name,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blueAccent,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 5),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                noticia.description,
-                                style: const TextStyle(fontSize: 14),
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  noticia.name,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blueAccent,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     },
