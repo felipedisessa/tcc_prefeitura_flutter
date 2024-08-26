@@ -1,5 +1,3 @@
-// main.dart
-
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'noticia.dart';
@@ -88,8 +86,8 @@ class HomePage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              '© 2024 AS Bebedouro',
-              style: const TextStyle(color: Colors.white, fontSize: 16),
+              '©️ 2024 AS Bebedouro',
+              style: TextStyle(color: Colors.white, fontSize: 16),
               textAlign: TextAlign.center,
             ),
           ),
@@ -116,16 +114,12 @@ class _NoticiasPageState extends State<NoticiasPage> {
   }
 
   Future<List<Noticia>> fetchNoticias() async {
-    try {
-      final response = await Dio().get('http://127.0.0.1:8000/noticias');
-      if (response.statusCode == 200) {
-        List<dynamic> data = response.data;
-        return data.map((json) => Noticia.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load noticias');
-      }
-    } catch (e) {
-      throw Exception('Error fetching noticias: $e');
+    final response = await Dio().get('http://127.0.0.1:8000/noticias');
+    if (response.statusCode == 200) {
+      List<dynamic> data = response.data;
+      return data.map((json) => Noticia.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load noticias');
     }
   }
 
@@ -154,7 +148,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: CarouselSlider(
                     options: CarouselOptions(
-                      height: 200,
+                      height: MediaQuery.of(context).size.height * 0.25, // 25% da altura da tela
                       autoPlay: true,
                       enlargeCenterPage: true,
                       aspectRatio: 16 / 9,
@@ -167,8 +161,9 @@ class _NoticiasPageState extends State<NoticiasPage> {
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
                               imageUrl,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                               width: double.infinity,
+                              height: MediaQuery.of(context).size.height * 0.25,
                             ),
                           );
                         },
@@ -191,62 +186,76 @@ class _NoticiasPageState extends State<NoticiasPage> {
                   return const Center(child: Text('Nenhuma notícia disponível.'));
                 } else {
                   final noticias = snapshot.data!;
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(10),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 1.0, // Proporção 1:1 (quadrado)
-                    ),
-                    itemCount: noticias.length,
-                    itemBuilder: (context, index) {
-                      final noticia = noticias[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NoticiaDetalhesPage(noticia: noticia),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Determine the number of columns based on the screen width
+                      int columns = 2;
+                      if (constraints.maxWidth > 1200) {
+                        columns = 4;
+                      } else if (constraints.maxWidth > 800) {
+                        columns = 3;
+                      }
+
+                      return GridView.builder(
+                        padding: const EdgeInsets.all(10),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: columns,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 1.0, // Proporção 1:1 (quadrado)
+                        ),
+                        itemCount: noticias.length,
+                        itemBuilder: (context, index) {
+                          final noticia = noticias[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      NoticiaDetalhesPage(noticia: noticia),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                      ),
+                                      child: Image.network(
+                                        noticia.imageUrl!,
+                                        fit: BoxFit.contain, 
+                                        width: double.infinity,
+                                        height: MediaQuery.of(context).size.height * 0.25, // 30% da altura da tela
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      noticia.name,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
-                        child: Card(
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10),
-                                  ),
-                                  child: Image.network(
-                                    noticia.imageUrl!,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  noticia.name,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       );
                     },
                   );
@@ -255,6 +264,50 @@ class _NoticiasPageState extends State<NoticiasPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+class NoticiaDetalhesPage extends StatelessWidget {
+  final Noticia noticia;
+
+  const NoticiaDetalhesPage({Key? key, required this.noticia}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(noticia.name),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            noticia.imageUrl != null
+                ? Image.network(
+                    noticia.imageUrl!,
+                    fit: BoxFit.contain, // Muda para BoxFit.contain
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.3, // 30% da altura da tela
+                  )
+                : Container(), // Placeholder se não houver imagem
+            const SizedBox(height: 16),
+            Text(
+              noticia.name,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              noticia.description,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
       ),
     );
   }
