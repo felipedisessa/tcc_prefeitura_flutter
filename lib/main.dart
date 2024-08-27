@@ -126,31 +126,31 @@ class _NoticiasPageState extends State<NoticiasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          FutureBuilder<List<Noticia>>(
-            future: _futureNoticias,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('Nenhuma notícia disponível.'));
-              } else {
-                final noticias = snapshot.data!;
-                final imageUrls = noticias
-                    .where((noticia) => noticia.imageUrl != null)
-                    .map((noticia) => noticia.imageUrl!)
-                    .toList();
+      body: FutureBuilder<List<Noticia>>(
+        future: _futureNoticias,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('Nenhuma notícia disponível.'));
+          } else {
+            final noticias = snapshot.data!;
+            final imageUrls = noticias
+                .where((noticia) => noticia.imageUrl != null)
+                .map((noticia) => noticia.imageUrl!)
+                .toList();
 
-                return Padding(
+            return Column(
+              children: [
+                Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: CarouselSlider(
                     options: CarouselOptions(
-                      height: MediaQuery.of(context).size.height * 0.25, // 25% da altura da tela
+                      height: MediaQuery.of(context).size.height * 0.25,
                       autoPlay: true,
-                      enlargeCenterPage: true,
+                      enlargeCenterPage: false,
                       aspectRatio: 16 / 9,
                       viewportFraction: 0.8,
                     ),
@@ -170,25 +170,10 @@ class _NoticiasPageState extends State<NoticiasPage> {
                       );
                     }).toList(),
                   ),
-                );
-              }
-            },
-          ),
-          Expanded(
-            child: FutureBuilder<List<Noticia>>(
-              future: _futureNoticias,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('Nenhuma notícia disponível.'));
-                } else {
-                  final noticias = snapshot.data!;
-                  return LayoutBuilder(
+                ),
+                Expanded(
+                  child: LayoutBuilder(
                     builder: (context, constraints) {
-                      // Determine the number of columns based on the screen width
                       int columns = 2;
                       if (constraints.maxWidth > 1200) {
                         columns = 4;
@@ -202,7 +187,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                           crossAxisCount: columns,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
-                          childAspectRatio: 1.0, // Proporção 1:1 (quadrado)
+                          childAspectRatio: 1.0,
                         ),
                         itemCount: noticias.length,
                         itemBuilder: (context, index) {
@@ -231,12 +216,22 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                         topLeft: Radius.circular(10),
                                         topRight: Radius.circular(10),
                                       ),
-                                      child: Image.network(
-                                        noticia.imageUrl!,
-                                        fit: BoxFit.contain, 
-                                        width: double.infinity,
-                                        height: MediaQuery.of(context).size.height * 0.25, // 30% da altura da tela
-                                      ),
+                                      child: noticia.imageUrl != null
+                                          ? Image.network(
+                                              noticia.imageUrl!,
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: MediaQuery.of(context).size.height * 0.25,
+                                            )
+                                          : Container(
+                                              width: double.infinity,
+                                              height: MediaQuery.of(context).size.height * 0.25,
+                                              color: Colors.grey[300],
+                                              child: const Icon(
+                                                Icons.image,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
                                     ),
                                   ),
                                   Padding(
@@ -258,16 +253,17 @@ class _NoticiasPageState extends State<NoticiasPage> {
                         },
                       );
                     },
-                  );
-                }
-              },
-            ),
-          ),
-        ],
+                  ),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
 }
+
 class NoticiaDetalhesPage extends StatelessWidget {
   final Noticia noticia;
 
@@ -287,11 +283,11 @@ class NoticiaDetalhesPage extends StatelessWidget {
             noticia.imageUrl != null
                 ? Image.network(
                     noticia.imageUrl!,
-                    fit: BoxFit.contain, // Muda para BoxFit.contain
+                    fit: BoxFit.contain,
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.3, // 30% da altura da tela
+                    height: MediaQuery.of(context).size.height * 0.3,
                   )
-                : Container(), // Placeholder se não houver imagem
+                : Container(),
             const SizedBox(height: 16),
             Text(
               noticia.name,
