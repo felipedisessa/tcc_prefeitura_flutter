@@ -19,8 +19,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AS Bebedouro',
       theme: ThemeData(
-        primaryColor: Colors.blue,
-        primarySwatch: Colors.blue,
+        primaryColor:Color.fromARGB(255, 60, 57, 57),
+
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Roboto',
       ),
@@ -42,37 +42,40 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        appBar: AppBar(
-          title: Row(
-            children: [
-              Image.asset(
-                'assets/logo.png',
-                height: 40,
-              ),
-              const SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  'AS Bebedouro',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+       appBar: AppBar(
+  title: Row(
+    children: [
+      Image.asset(
+        'assets/logo.png',
+        height: 40,
+      ),
+      const SizedBox(width: 10),
+      Flexible(
+        child: Text(
+          'AS Bebedouro',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 60, 57, 57), // Cor alterada para um vermelho
           ),
-          backgroundColor: Colors.blueAccent,
-          bottom: const TabBar(
-            indicatorColor: Colors.white,
-            tabs: [
-              Tab(icon: Icon(Icons.article), text: 'Notícias'),
-              Tab(icon: Icon(Icons.info), text: 'Sobre'),
-              Tab(icon: Icon(Icons.work), text: 'Serviços'),
-              Tab(icon: Icon(Icons.contact_mail), text: 'Contato'),
-            ],
-          ),
+          overflow: TextOverflow.ellipsis,
         ),
+      ),
+    ],
+  ),
+
+  backgroundColor: Colors.white, // Alterado para branco
+  bottom: const TabBar(
+    indicatorColor:  Color.fromARGB(255, 60, 57, 57), // Cor do indicador alterada para vermelho
+    tabs: [
+      Tab(icon: Icon(Icons.article, color: Color.fromARGB(255, 60, 57, 57)), text: 'Notícias'),
+      Tab(icon: Icon(Icons.info, color: Color.fromARGB(255, 60, 57, 57)), text: 'Sobre'),
+      Tab(icon: Icon(Icons.work, color: Color.fromARGB(255, 60, 57, 57)), text: 'Serviços'),
+      Tab(icon: Icon(Icons.contact_mail, color:  Color.fromARGB(255, 60, 57, 57)), text: 'Contato'),
+    ],
+  ),
+),
+
         body: const TabBarView(
           children: [
             NoticiasPage(),
@@ -82,7 +85,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
         bottomNavigationBar: BottomAppBar(
-          color: Colors.blueAccent,
+          color: Color.fromARGB(255, 60, 57, 57),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -148,7 +151,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: CarouselSlider(
                     options: CarouselOptions(
-                      height: MediaQuery.of(context).size.height * 0.25,
+                      height: MediaQuery.of(context).size.height * 0.3,  // Reduzi para 20% da altura da tela
                       autoPlay: true,
                       enlargeCenterPage: false,
                       aspectRatio: 16 / 9,
@@ -163,7 +166,6 @@ class _NoticiasPageState extends State<NoticiasPage> {
                               imageUrl,
                               fit: BoxFit.contain,
                               width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.25,
                             ),
                           );
                         },
@@ -176,9 +178,13 @@ class _NoticiasPageState extends State<NoticiasPage> {
                     builder: (context, constraints) {
                       int columns = 2;
                       if (constraints.maxWidth > 1200) {
-                        columns = 4;
+                        columns = 5;  // Aumentado para 5 colunas para telas muito largas
                       } else if (constraints.maxWidth > 800) {
-                        columns = 3;
+                        columns = 4;  // Aumentado para 4 colunas para telas médias
+                      } else if (constraints.maxWidth > 600) {
+                        columns = 3;  // Aumentado para 3 colunas para telas menores
+                      } else {
+                        columns = 2;  // Mantido em 2 colunas para telas pequenas
                       }
 
                       return GridView.builder(
@@ -187,7 +193,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                           crossAxisCount: columns,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
-                          childAspectRatio: 1.0,
+                          childAspectRatio: 0.8, // Ajustado para tornar as imagens menores
                         ),
                         itemCount: noticias.length,
                         itemBuilder: (context, index) {
@@ -202,53 +208,53 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                 ),
                               );
                             },
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10),
-                                      ),
-                                      child: noticia.imageUrl != null
-                                          ? Image.network(
-                                              noticia.imageUrl!,
-                                              fit: BoxFit.cover,
-                                              width: double.infinity,
-                                              height: MediaQuery.of(context).size.height * 0.25,
-                                            )
-                                          : Container(
-                                              width: double.infinity,
-                                              height: MediaQuery.of(context).size.height * 0.25,
-                                              color: Colors.grey[300],
-                                              child: const Icon(
-                                                Icons.image,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      noticia.name,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blueAccent,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                           child: Card(
+  elevation: 5,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(15), // Borda mais arredondada
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Expanded(
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(15), // Borda mais arredondada
+            topRight: Radius.circular(15), // Borda mais arredondada
+          ),
+          child: noticia.imageUrl != null
+              ? Image.network(
+                  noticia.imageUrl!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.15,
+                )
+              : Container(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.15,
+                  color: Colors.grey[300],
+                  child: const Icon(
+                    Icons.image,
+                    color: Colors.grey,
+                  ),
+                ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          noticia.name,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black, // Ajuste a cor para melhor contraste
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    ],
+  ),
+),
                           );
                         },
                       );
@@ -275,35 +281,47 @@ class NoticiaDetalhesPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(noticia.name),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            noticia.imageUrl != null
-                ? Image.network(
-                    noticia.imageUrl!,
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.3,
-                  )
-                : Container(),
-            const SizedBox(height: 16),
-            Text(
-              noticia.name,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
+      body: SingleChildScrollView( // Adicionado para evitar problemas de overflow
+       child: Padding(
+  padding: const EdgeInsets.all(16.0), // Aumentado para mais espaço ao redor
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      noticia.imageUrl != null
+          ? Image.network(
+              noticia.imageUrl!,
+              fit: BoxFit.contain,
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.3,
+            )
+          : Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.3,
+              color: Colors.grey[300],
+              child: const Icon(
+                Icons.image,
+                color: Colors.grey,
+                size: 100,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              noticia.description,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ],
+      const SizedBox(height: 16),
+      Text(
+        noticia.name,
+        style: const TextStyle(
+          fontSize: 24, 
+          fontWeight: FontWeight.bold,
+          color: Colors.black, // Ajuste de cor para contraste
         ),
+      ),
+      const SizedBox(height: 8),
+      Text(
+        noticia.description,
+        style: const TextStyle(fontSize: 16, color: Colors.black54),
+      ),
+    ],
+  ),
+),
+
       ),
     );
   }
