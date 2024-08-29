@@ -8,7 +8,7 @@ class ContatoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Contato'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Color.fromARGB(255, 46, 48, 50),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

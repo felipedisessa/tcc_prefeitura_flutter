@@ -19,8 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AS Bebedouro',
       theme: ThemeData(
-        primaryColor:Color.fromARGB(255, 60, 57, 57),
-
+        primaryColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Roboto',
       ),
@@ -42,40 +41,41 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-       appBar: AppBar(
-  title: Row(
-    children: [
-      Image.asset(
-        'assets/logo.png',
-        height: 40,
-      ),
-      const SizedBox(width: 10),
-      Flexible(
-        child: Text(
-          'AS Bebedouro',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 60, 57, 57), // Cor alterada para um vermelho
+        appBar: AppBar(
+          backgroundColor: Colors.blueGrey[800],
+          title: Row(
+            children: [
+              Image.asset(
+                'assets/logo.png',
+                height: 50,
+              ),
+              const SizedBox(width: 10),
+              const Flexible(
+                child: Text(
+                  'Assistência Social',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
-          overflow: TextOverflow.ellipsis,
+          bottom: const TabBar(
+            indicatorColor: Color.fromARGB(255, 27, 27, 26),
+            labelColor: Color.fromARGB(255, 27, 27, 26),
+            unselectedLabelColor: Colors.white70,
+            labelStyle: TextStyle(fontWeight: FontWeight.bold),
+            tabs: [
+              Tab(text: 'HOME'),
+              Tab(text: 'SOBRE'),
+              Tab(text: 'SERVIÇOS'),
+              Tab(text: 'CONTATOS'),
+            ],
+          ),
         ),
-      ),
-    ],
-  ),
-
-  backgroundColor: Colors.white, // Alterado para branco
-  bottom: const TabBar(
-    indicatorColor:  Color.fromARGB(255, 60, 57, 57), // Cor do indicador alterada para vermelho
-    tabs: [
-      Tab(icon: Icon(Icons.article, color: Color.fromARGB(255, 60, 57, 57)), text: 'Notícias'),
-      Tab(icon: Icon(Icons.info, color: Color.fromARGB(255, 60, 57, 57)), text: 'Sobre'),
-      Tab(icon: Icon(Icons.work, color: Color.fromARGB(255, 60, 57, 57)), text: 'Serviços'),
-      Tab(icon: Icon(Icons.contact_mail, color:  Color.fromARGB(255, 60, 57, 57)), text: 'Contato'),
-    ],
-  ),
-),
-
         body: const TabBarView(
           children: [
             NoticiasPage(),
@@ -84,13 +84,13 @@ class HomePage extends StatelessWidget {
             ContatoPage(),
           ],
         ),
-        bottomNavigationBar: BottomAppBar(
-          color: Color.fromARGB(255, 60, 57, 57),
+        bottomNavigationBar: const BottomAppBar(
+          color: Color.fromARGB(255, 35, 33, 33),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8.0),
             child: Text(
-              '©️ 2024 AS Bebedouro',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              '© 2024 Prefeitura Municipal de Bebedouro',
+              style: TextStyle(color: Colors.white, fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ),
@@ -117,12 +117,16 @@ class _NoticiasPageState extends State<NoticiasPage> {
   }
 
   Future<List<Noticia>> fetchNoticias() async {
-    final response = await Dio().get('http://127.0.0.1:8000/noticias');
-    if (response.statusCode == 200) {
-      List<dynamic> data = response.data;
-      return data.map((json) => Noticia.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load noticias');
+    try {
+      final response = await Dio().get('http://127.0.0.1:8000/noticias');
+      if (response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        return data.map((json) => Noticia.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load noticias');
+      }
+    } catch (e) {
+      throw Exception('Erro ao carregar notícias: $e');
     }
   }
 
@@ -135,7 +139,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Erro: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('Nenhuma notícia disponível.'));
           } else {
@@ -145,126 +149,185 @@ class _NoticiasPageState extends State<NoticiasPage> {
                 .map((noticia) => noticia.imageUrl!)
                 .toList();
 
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      height: MediaQuery.of(context).size.height * 0.3,  // Reduzi para 20% da altura da tela
-                      autoPlay: true,
-                      enlargeCenterPage: false,
-                      aspectRatio: 16 / 9,
-                      viewportFraction: 0.8,
-                    ),
-                    items: imageUrls.map((imageUrl) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              imageUrl,
-                              fit: BoxFit.contain,
-                              width: double.infinity,
-                            ),
-                          );
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      int columns = 2;
-                      if (constraints.maxWidth > 1200) {
-                        columns = 5;  // Aumentado para 5 colunas para telas muito largas
-                      } else if (constraints.maxWidth > 800) {
-                        columns = 4;  // Aumentado para 4 colunas para telas médias
-                      } else if (constraints.maxWidth > 600) {
-                        columns = 3;  // Aumentado para 3 colunas para telas menores
-                      } else {
-                        columns = 2;  // Mantido em 2 colunas para telas pequenas
-                      }
-
-                      return GridView.builder(
-                        padding: const EdgeInsets.all(10),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: columns,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 0.8, 
-                        ),
-                        itemCount: noticias.length,
-                        itemBuilder: (context, index) {
-                          final noticia = noticias[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      NoticiaDetalhesPage(noticia: noticia),
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Carousel de Imagens
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        autoPlay: true,
+                        enlargeCenterPage: true,
+                        aspectRatio: 16 / 9,
+                        viewportFraction: 0.8,
+                        autoPlayInterval: const Duration(seconds: 5),
+                      ),
+                      items: imageUrls.map((imageUrl) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                errorBuilder: (context, error, stackTrace) => Container(
+                                  color: Colors.grey[300],
+                                  child: const Icon(Icons.broken_image, color: Colors.grey),
                                 ),
-                              );
-                            },
-                           child: Card(
-  elevation: 5,
-  shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(15), // Borda mais arredondada
-  ),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Expanded(
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(15), // Borda mais arredondada
-            topRight: Radius.circular(15), // Borda mais arredondada
-          ),
-          child: noticia.imageUrl != null
-              ? Image.network(
-                  noticia.imageUrl!,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.15,
-                )
-              : Container(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.15,
-                  color: Colors.grey[300],
-                  child: const Icon(
-                    Icons.image,
-                    color: Colors.grey,
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          noticia.name,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black, // Ajuste a cor para melhor contraste
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-    ],
-  ),
-),
-                          );
-                        },
-                      );
-                    },
+                  // Seção de Notícias
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        // Mensagem Chamativa
+                        Text(
+                          'Notícias Publicadas',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueGrey[800],
+                          ),
+                          textAlign: TextAlign.center, // Centraliza o texto
+                        ),
+                        const SizedBox(height: 20),
+                        // Linha Separadora
+                        Divider(
+                          color: Colors.blueGrey[400],
+                          thickness: 2,
+                        ),
+                        const SizedBox(height: 20),
+                        // Grid de Notícias
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            int columns = 2; // Define duas colunas como padrão para mobile
+                            if (constraints.maxWidth > 1200) {
+                              columns = 4;
+                            } else if (constraints.maxWidth > 800) {
+                              columns = 3;
+                            }
+
+                            return Center(
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  maxWidth: 1200, // Define a largura máxima do GridView
+                                ),
+                                child: GridView.builder(
+                                  padding: const EdgeInsets.all(10),
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: columns,
+                                    crossAxisSpacing: 16,
+                                    mainAxisSpacing: 16,
+                                    childAspectRatio: 1.0,
+                                  ),
+                                  itemCount: noticias.length,
+                                  itemBuilder: (context, index) {
+                                    final noticia = noticias[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => NoticiaDetalhesPage(noticia: noticia),
+                                          ),
+                                        );
+                                      },
+                                      child: NoticiaCard(noticia: noticia),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class NoticiaCard extends StatelessWidget {
+  final Noticia noticia;
+
+  const NoticiaCard({Key? key, required this.noticia}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+              child: noticia.imageUrl != null
+                  ? Image.network(
+                      noticia.imageUrl!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                      ),
+                    )
+                  : Container(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.15,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image, color: Colors.grey),
+                    ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              noticia.name,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            child: Text(
+              noticia.description,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
