@@ -42,14 +42,14 @@ class HomePage extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blueGrey[800],
+          backgroundColor: Color.fromARGB(255, 27, 27, 26),
           title: Row(
             children: [
               Image.asset(
                 'assets/logo.png',
                 height: 50,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 15),
               const Flexible(
                 child: Text(
                   'Assistência Social',
@@ -65,7 +65,7 @@ class HomePage extends StatelessWidget {
           ),
           bottom: const TabBar(
             indicatorColor: Color.fromARGB(255, 27, 27, 26),
-            labelColor: Color.fromARGB(255, 27, 27, 26),
+            labelColor: Color.fromARGB(255, 255, 255, 255),
             unselectedLabelColor: Colors.white70,
             labelStyle: TextStyle(fontWeight: FontWeight.bold),
             tabs: [
@@ -85,7 +85,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
         bottomNavigationBar: const BottomAppBar(
-          color: Color.fromARGB(255, 35, 33, 33),
+          color: Color.fromARGB(255, 27, 27, 26),
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
@@ -154,34 +154,39 @@ class _NoticiasPageState extends State<NoticiasPage> {
                 children: [
                   // Carousel de Imagens
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        height: MediaQuery.of(context).size.height * 0.25,
-                        autoPlay: true,
-                        enlargeCenterPage: true,
-                        aspectRatio: 16 / 9,
-                        viewportFraction: 0.8,
-                        autoPlayInterval: const Duration(seconds: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: 1200, // Define a largura máxima do CarouselSlider
                       ),
-                      items: imageUrls.map((imageUrl) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                errorBuilder: (context, error, stackTrace) => Container(
-                                  color: Colors.grey[300],
-                                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                      child: CarouselSlider(
+                        options: CarouselOptions(
+                          height: MediaQuery.of(context).size.height * 0.25,
+                          autoPlay: true,
+                          enlargeCenterPage: true,
+                          aspectRatio: 16 / 9,
+                          viewportFraction: 0.8,
+                          autoPlayInterval: const Duration(seconds: 5),
+                        ),
+                        items: imageUrls.map((imageUrl) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  errorBuilder: (context, error, stackTrace) => Container(
+                                    color: Colors.grey[300],
+                                    child: const Icon(Icons.broken_image, color: Colors.grey),
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      }).toList(),
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                   // Seção de Notícias
@@ -191,18 +196,18 @@ class _NoticiasPageState extends State<NoticiasPage> {
                       children: [
                         // Mensagem Chamativa
                         Text(
-                          'Notícias Publicadas',
+                          'Últimas Notícias',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 26,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blueGrey[800],
+                            color: Color.fromARGB(255, 27, 27, 26),
                           ),
-                          textAlign: TextAlign.center, // Centraliza o texto
+                          textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
                         // Linha Separadora
                         Divider(
-                          color: Colors.blueGrey[400],
+                          color: Color.fromARGB(255, 27, 27, 26),
                           thickness: 2,
                         ),
                         const SizedBox(height: 20),
@@ -243,7 +248,57 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                           ),
                                         );
                                       },
-                                      child: NoticiaCard(noticia: noticia),
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                        elevation: 5,
+                                        child: Column(
+                                          children: [
+                                            if (noticia.imageUrl != null) 
+                                              ClipRRect(
+                                                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                                                child: Image.network(
+                                                  noticia.imageUrl!,
+                                                  height: 120,
+                                                  width: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context, error, stackTrace) => Container(
+                                                    color: Colors.grey[300],
+                                                    child: const Icon(Icons.broken_image, color: Colors.grey),
+                                                  ),
+                                                ),
+                                              ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    noticia.name,
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    noticia.description,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     );
                                   },
                                 ),
@@ -259,75 +314,6 @@ class _NoticiasPageState extends State<NoticiasPage> {
             );
           }
         },
-      ),
-    );
-  }
-}
-
-class NoticiaCard extends StatelessWidget {
-  final Noticia noticia;
-
-  const NoticiaCard({Key? key, required this.noticia}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10),
-                topRight: Radius.circular(10),
-              ),
-              child: noticia.imageUrl != null
-                  ? Image.network(
-                      noticia.imageUrl!,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.broken_image, color: Colors.grey),
-                      ),
-                    )
-                  : Container(
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.height * 0.15,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.image, color: Colors.grey),
-                    ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              noticia.name,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: Text(
-              noticia.description,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
       ),
     );
   }

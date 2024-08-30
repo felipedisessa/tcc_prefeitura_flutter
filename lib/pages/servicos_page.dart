@@ -8,7 +8,7 @@ class ServicosPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Serviços'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blueGrey[800],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -18,7 +18,7 @@ class ServicosPage extends StatelessWidget {
             // Cabeçalho
             Container(
               decoration: BoxDecoration(
-                color: Colors.blueAccent,
+                color: Colors.blueGrey[800],
                 borderRadius: BorderRadius.circular(12.0),
               ),
               padding: const EdgeInsets.all(16.0),
@@ -40,7 +40,7 @@ class ServicosPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Imagem destacada
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
@@ -52,7 +52,7 @@ class ServicosPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Texto descritivo com estilo melhorado
             Container(
               decoration: BoxDecoration(
@@ -62,7 +62,7 @@ class ServicosPage extends StatelessWidget {
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 6.0,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),

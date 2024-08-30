@@ -8,7 +8,7 @@ class ContatoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Contato'),
-        backgroundColor: Color.fromARGB(255, 46, 48, 50),
+        backgroundColor: Colors.blueGrey[800],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -18,7 +18,7 @@ class ContatoPage extends StatelessWidget {
             // Cabeçalho
             Container(
               decoration: BoxDecoration(
-                color: Colors.blueAccent,
+                color: Colors.blueGrey[800],
                 borderRadius: BorderRadius.circular(12.0),
               ),
               padding: const EdgeInsets.all(16.0),
@@ -62,7 +62,7 @@ class ContatoPage extends StatelessWidget {
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 6.0,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
