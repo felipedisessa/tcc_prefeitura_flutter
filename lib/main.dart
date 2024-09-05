@@ -69,7 +69,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(width: 15),
               Expanded(
                 child: Container(
-                  height: 150, // Ajuste a altura do banner conforme necessário
+                  height: 140, // Ajuste a altura do banner conforme necessário
                   width: double.infinity,
                   child: Image.asset(
                     'assets/banner.png',
