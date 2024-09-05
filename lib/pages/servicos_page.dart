@@ -6,25 +6,28 @@ class ServicosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Serviços'),
-        backgroundColor: Colors.blueGrey[800],
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cabeçalho
+            // Cabeçalho da página
             Container(
               decoration: BoxDecoration(
-                color: Colors.blueGrey[800],
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 6.0,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  Icon(Icons.handshake, size: 32, color: Colors.white),
+                  Icon(Icons.handshake, size: 32, color: Colors.black87),
                   const SizedBox(width: 10),
                   const Expanded(
                     child: Text(
@@ -32,7 +35,7 @@ class ServicosPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black87,
                       ),
                     ),
                   ),
@@ -48,12 +51,12 @@ class ServicosPage extends StatelessWidget {
                 'assets/servicos.png',
                 height: 200,
                 width: double.infinity,
-                fit: BoxFit.contain,
+                fit: BoxFit.contain, // Ajusta o fit para cobrir o espaço da imagem
               ),
             ),
             const SizedBox(height: 20),
 
-            // Texto descritivo com estilo melhorado
+            // Texto descritivo
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
