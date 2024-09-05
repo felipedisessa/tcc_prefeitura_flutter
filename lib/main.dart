@@ -32,7 +32,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -42,23 +41,40 @@ class HomePage extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: 200, // Ajuste a altura do cabeçalho conforme necessário
           backgroundColor: Color.fromARGB(255, 27, 27, 26),
           title: Row(
             children: [
-              Image.asset(
-                'assets/logo.png',
-                height: 50,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Logo
+                  Image.asset(
+                    'assets/logo.png',
+                    height: 80, // Ajuste a altura do logo conforme necessário
+                  ),
+                  const SizedBox(height: 10),
+                  // Título
+                  const Text(
+                    'Assistência Social',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
               const SizedBox(width: 15),
-              const Flexible(
-                child: Text(
-                  'Assistência Social',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              Expanded(
+                child: Container(
+                  height: 150, // Ajuste a altura do banner conforme necessário
+                  width: double.infinity,
+                  child: Image.asset(
+                    'assets/banner.png',
+                    fit: BoxFit.contain, // Ajusta o fit para mostrar o banner completo
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -99,6 +115,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
 
 class NoticiasPage extends StatefulWidget {
   const NoticiasPage({Key? key}) : super(key: key);
@@ -277,21 +294,21 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                                   Text(
                                                     noticia.name,
                                                     style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
                                                       fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
                                                     ),
-                                                    maxLines: 2,
                                                     overflow: TextOverflow.ellipsis,
+                                                    maxLines: 2,
                                                   ),
-                                                  const SizedBox(height: 4),
+                                                  const SizedBox(height: 5),
                                                   Text(
                                                     noticia.description,
                                                     style: const TextStyle(
                                                       fontSize: 14,
-                                                      color: Colors.grey,
+                                                      color: Colors.black54,
                                                     ),
-                                                    maxLines: 2,
                                                     overflow: TextOverflow.ellipsis,
+                                                    maxLines: 3,
                                                   ),
                                                 ],
                                               ),
