@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -41,8 +42,8 @@ class HomePage extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 200, // Ajuste a altura do cabeçalho conforme necessário
-          backgroundColor: Color.fromARGB(255, 27, 27, 26),
+          toolbarHeight: 200,
+          backgroundColor: Colors.white,
           title: Row(
             children: [
               Column(
@@ -51,7 +52,7 @@ class HomePage extends StatelessWidget {
                   // Logo
                   Image.asset(
                     'assets/logo.png',
-                    height: 80, // Ajuste a altura do logo conforme necessário
+                    height: 80,
                   ),
                   const SizedBox(height: 10),
                   // Título
@@ -60,7 +61,7 @@ class HomePage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 27, 27, 26),
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -69,11 +70,11 @@ class HomePage extends StatelessWidget {
               const SizedBox(width: 15),
               Expanded(
                 child: Container(
-                  height: 140, // Ajuste a altura do banner conforme necessário
+                  height: 140,
                   width: double.infinity,
                   child: Image.asset(
                     'assets/banner.png',
-                    fit: BoxFit.contain, // Ajusta o fit para mostrar o banner completo
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
@@ -81,8 +82,8 @@ class HomePage extends StatelessWidget {
           ),
           bottom: const TabBar(
             indicatorColor: Color.fromARGB(255, 27, 27, 26),
-            labelColor: Color.fromARGB(255, 255, 255, 255),
-            unselectedLabelColor: Colors.white70,
+            labelColor: Color.fromARGB(255, 27, 27, 26),
+            unselectedLabelColor: Colors.black54,
             labelStyle: TextStyle(fontWeight: FontWeight.bold),
             tabs: [
               Tab(text: 'HOME'),
@@ -100,13 +101,13 @@ class HomePage extends StatelessWidget {
             ContatoPage(),
           ],
         ),
-        bottomNavigationBar: const BottomAppBar(
-          color: Color.fromARGB(255, 27, 27, 26),
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Text(
               '© 2024 Prefeitura Municipal de Bebedouro',
-              style: TextStyle(color: Colors.white, fontSize: 14),
+              style: TextStyle(color: Colors.black54, fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ),
@@ -115,7 +116,6 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
 
 class NoticiasPage extends StatefulWidget {
   const NoticiasPage({Key? key}) : super(key: key);
@@ -174,7 +174,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                     child: Container(
                       constraints: BoxConstraints(
-                        maxWidth: 1200, // Define a largura máxima do CarouselSlider
+                        maxWidth: 1200,
                       ),
                       child: CarouselSlider(
                         options: CarouselOptions(
@@ -241,7 +241,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                             return Center(
                               child: Container(
                                 constraints: BoxConstraints(
-                                  maxWidth: 1200, // Define a largura máxima do GridView
+                                  maxWidth: 1200,
                                 ),
                                 child: GridView.builder(
                                   padding: const EdgeInsets.all(10),
