@@ -10,7 +10,7 @@ class NoticiaDetalhesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 27, 27, 26), // Consistência de cor com o resto do projeto
+        backgroundColor: Color.fromARGB(255, 255, 255, 255), // Consistência de cor com o resto do projeto
         title: Text(
           noticia.name,
           style: const TextStyle(
@@ -20,7 +20,7 @@ class NoticiaDetalhesPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white), // Define a cor do ícone de volta
+        iconTheme: const IconThemeData(color: Color.fromARGB(255, 0, 0, 0)), // Define a cor do ícone de volta
       ),
       body: SingleChildScrollView(
         child: Padding(

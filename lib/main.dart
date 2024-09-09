@@ -42,24 +42,24 @@ class HomePage extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 200,
+          toolbarHeight: 150, // Ajuste a altura do cabeçalho conforme necessário
           backgroundColor: Colors.white,
           title: Row(
             children: [
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Logo
                   Image.asset(
                     'assets/logo.png',
-                    height: 80,
+                    height: 60, // Ajuste a altura da logo conforme necessário
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
                   // Título
                   const Text(
                     'Assistência Social',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 20, // Ajuste o tamanho do título conforme necessário
                       fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 27, 27, 26),
                     ),
@@ -67,10 +67,10 @@ class HomePage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 10),
               Expanded(
                 child: Container(
-                  height: 140,
+                  height: 100, // Ajuste a altura do banner conforme necessário
                   width: double.infinity,
                   child: Image.asset(
                     'assets/banner.png',
