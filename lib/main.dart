@@ -51,24 +51,24 @@ class HomePage extends StatelessWidget {
               return Row(
                 children: [
                   if (isWideScreen) ...[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          'assets/logo.png',
-                          height: 80,
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Assistência Social',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 27, 27, 26),
-                          ),
-                        ),
-                      ],
-                    ),
+                  Column(
+  crossAxisAlignment: CrossAxisAlignment.center, // Alinha todos os itens da coluna no centro
+  children: [
+    Image.asset(
+      'assets/logo.png',
+      height: 80,
+    ),
+    const SizedBox(height: 5),
+    const Text(
+      'Assistência Social',
+      style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Color.fromARGB(255, 27, 27, 26),
+      ),
+    ),
+  ],
+),
                     const SizedBox(width: 10),
                   ] else ...[
                     Image.asset(
