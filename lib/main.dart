@@ -42,50 +42,59 @@ class HomePage extends StatelessWidget {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 150, // Ajuste a altura do cabeçalho conforme necessário
+          toolbarHeight: 150,
           backgroundColor: Colors.white,
-          title: Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+          title: LayoutBuilder(
+            builder: (context, constraints) {
+              final isWideScreen = constraints.maxWidth > 800;
+
+              return Row(
                 children: [
-                  // Logo
-                  Image.asset(
-                    'assets/logo.png',
-                    height: 60, // Ajuste a altura da logo conforme necessário
-                  ),
-                  const SizedBox(height: 5),
-                  // Título
-                  const Text(
-                    'Assistência Social',
-                    style: TextStyle(
-                      fontSize: 20, // Ajuste o tamanho do título conforme necessário
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 27, 27, 26),
+                  if (isWideScreen) ...[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          'assets/logo.png',
+                          height: 80,
+                        ),
+                        const SizedBox(height: 5),
+                        const Text(
+                          'Assistência Social',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 27, 27, 26),
+                          ),
+                        ),
+                      ],
                     ),
-                    overflow: TextOverflow.ellipsis,
+                    const SizedBox(width: 10),
+                  ] else ...[
+                    Image.asset(
+                      'assets/logo.png',
+                      height: 40,
+                    ),
+                  ],
+                  Expanded(
+                    child: Container(
+                      height: 100,
+                      child: Image.asset(
+                        'assets/banner.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                   ),
                 ],
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                  height: 100, // Ajuste a altura do banner conforme necessário
-                  width: double.infinity,
-                  child: Image.asset(
-                    'assets/banner.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-            ],
+              );
+            },
           ),
-          bottom: const TabBar(
+          bottom: TabBar(
             indicatorColor: Color.fromARGB(255, 27, 27, 26),
             labelColor: Color.fromARGB(255, 27, 27, 26),
             unselectedLabelColor: Colors.black54,
-            labelStyle: TextStyle(fontWeight: FontWeight.bold),
-            tabs: [
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            tabs: const [
               Tab(text: 'HOME'),
               Tab(text: 'SOBRE'),
               Tab(text: 'SERVIÇOS'),
@@ -107,7 +116,7 @@ class HomePage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               '© 2024 Prefeitura Municipal de Bebedouro',
-              style: TextStyle(color: Colors.black54, fontSize: 14),
+              style: TextStyle(color: const Color.fromARGB(228, 0, 0, 0), fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ),
@@ -161,11 +170,6 @@ class _NoticiasPageState extends State<NoticiasPage> {
             return const Center(child: Text('Nenhuma notícia disponível.'));
           } else {
             final noticias = snapshot.data!;
-            final imageUrls = noticias
-                .where((noticia) => noticia.imageUrl != null)
-                .map((noticia) => noticia.imageUrl!)
-                .toList();
-
             return SingleChildScrollView(
               child: Column(
                 children: [
@@ -173,36 +177,62 @@ class _NoticiasPageState extends State<NoticiasPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                     child: Container(
-                      constraints: BoxConstraints(
-                        maxWidth: 1200,
-                      ),
-                      child: CarouselSlider(
-                        options: CarouselOptions(
-                          height: MediaQuery.of(context).size.height * 0.25,
-                          autoPlay: true,
-                          enlargeCenterPage: true,
-                          aspectRatio: 16 / 9,
-                          viewportFraction: 0.8,
-                          autoPlayInterval: const Duration(seconds: 5),
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                            height: MediaQuery.of(context).size.height * 0.25,
+                            autoPlay: true,
+                            enlargeCenterPage: true,
+                            aspectRatio: 16 / 9,
+                            viewportFraction: 0.8,
+                            autoPlayInterval: const Duration(seconds: 5),
+                            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                          ),
+                          items: noticias.map((noticia) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Stack(
+                                  children: [
+                                    if (noticia.imageUrl != null)
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.network(
+                                          noticia.imageUrl!,
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: MediaQuery.of(context).size.height * 0.25,
+                                          errorBuilder: (context, error, stackTrace) => Container(
+                                            color: Colors.grey[300],
+                                            child: const Icon(Icons.broken_image, color: Colors.grey),
+                                          ),
+                                        ),
+                                      ),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        color: Colors.black.withOpacity(0.6),
+                                        child: Text(
+                                          noticia.name,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }).toList(),
                         ),
-                        items: imageUrls.map((imageUrl) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  errorBuilder: (context, error, stackTrace) => Container(
-                                    color: Colors.grey[300],
-                                    child: const Icon(Icons.broken_image, color: Colors.grey),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }).toList(),
                       ),
                     ),
                   ),
@@ -212,7 +242,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                     child: Column(
                       children: [
                         // Mensagem Chamativa
-                        Text(
+                        const Text(
                           'Últimas Notícias',
                           style: TextStyle(
                             fontSize: 26,
@@ -222,8 +252,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
-                        // Linha Separadora
-                        Divider(
+                        const Divider(
                           color: Color.fromARGB(255, 27, 27, 26),
                           thickness: 2,
                         ),
@@ -231,7 +260,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                         // Grid de Notícias
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            int columns = 2; // Define duas colunas como padrão para mobile
+                            int columns = 1; // Define duas colunas como padrão para mobile
                             if (constraints.maxWidth > 1200) {
                               columns = 4;
                             } else if (constraints.maxWidth > 800) {
@@ -240,9 +269,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
 
                             return Center(
                               child: Container(
-                                constraints: BoxConstraints(
-                                  maxWidth: 1200,
-                                ),
+                                constraints: const BoxConstraints(maxWidth: 1200),
                                 child: GridView.builder(
                                   padding: const EdgeInsets.all(10),
                                   shrinkWrap: true,
@@ -271,15 +298,19 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                         ),
                                         elevation: 5,
                                         child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            if (noticia.imageUrl != null) 
+                                            if (noticia.imageUrl != null)
                                               ClipRRect(
-                                                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                                                borderRadius: const BorderRadius.only(
+                                                  topLeft: Radius.circular(15),
+                                                  topRight: Radius.circular(15),
+                                                ),
                                                 child: Image.network(
                                                   noticia.imageUrl!,
-                                                  height: 120,
-                                                  width: double.infinity,
                                                   fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                  height: 120,
                                                   errorBuilder: (context, error, stackTrace) => Container(
                                                     color: Colors.grey[300],
                                                     child: const Icon(Icons.broken_image, color: Colors.grey),
@@ -288,29 +319,26 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                               ),
                                             Padding(
                                               padding: const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    noticia.name,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                    overflow: TextOverflow.ellipsis,
-                                                    maxLines: 2,
-                                                  ),
-                                                  const SizedBox(height: 5),
-                                                  Text(
-                                                    noticia.description,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black54,
-                                                    ),
-                                                    overflow: TextOverflow.ellipsis,
-                                                    maxLines: 3,
-                                                  ),
-                                                ],
+                                              child: Text(
+                                                noticia.name,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromARGB(255, 27, 27, 26),
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                              child: Text(
+                                                noticia.description,
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black54,
+                                                ),
                                               ),
                                             ),
                                           ],
