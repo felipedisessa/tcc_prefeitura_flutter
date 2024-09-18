@@ -16,20 +16,20 @@ class ServicosPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 6.0,
-                    offset: const Offset(0, 2),
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),
               padding: const EdgeInsets.all(16.0),
-              child: Row(
+              child: const Row(
                 children: [
                   Icon(Icons.handshake, size: 32, color: Colors.black87),
-                  const SizedBox(width: 10),
-                  const Expanded(
+                  SizedBox(width: 10),
+                  Expanded(
                     child: Text(
                       'Serviços Oferecidos',
                       style: TextStyle(
@@ -61,11 +61,11 @@ class ServicosPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 6.0,
-                    offset: const Offset(0, 2),
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),
