@@ -10,7 +10,7 @@ class NoticiaDetalhesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255), // Consistência de cor com o resto do projeto
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Consistência de cor com o resto do projeto
         title: Text(
           noticia.name,
           style: const TextStyle(

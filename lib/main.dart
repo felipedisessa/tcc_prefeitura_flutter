@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
                 children: [
                   if (isWideScreen) ...[
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                       crossAxisAlignment: CrossAxisAlignment.center, 
                       children: [
                         Image.asset(
                           'assets/logo.png',
@@ -62,6 +62,7 @@ class HomePage extends StatelessWidget {
                         const Text(
                           'Assistência Social',
                           style: TextStyle(
+                          
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 27, 27, 26),
@@ -77,7 +78,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                   Expanded(
-                    child: Container(
+                    child:SizedBox(
                       height: 100,
                       child: Image.asset(
                         'assets/banner.png',
@@ -89,18 +90,18 @@ class HomePage extends StatelessWidget {
               );
             },
           ),
-          bottom: TabBar(
-            indicatorColor: Color.fromARGB(255, 27, 27, 26),
-            labelColor: Color.fromARGB(255, 27, 27, 26),
-            unselectedLabelColor: Colors.black54,
-            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-            tabs: const [
-              Tab(text: 'HOME'),
-              Tab(text: 'SOBRE'),
-              Tab(text: 'SERVIÇOS'),
-              Tab(text: 'CONTATOS'),
-            ],
-          ),
+      bottom: const TabBar(
+  indicatorColor: Color.fromARGB(255, 27, 27, 26),
+  labelColor: Color.fromARGB(255, 27, 27, 26),
+  unselectedLabelColor: Colors.black54,
+  labelStyle: TextStyle(fontWeight: FontWeight.bold),
+  tabs: [
+    Tab(text: 'HOME'),
+    Tab(text: 'SOBRE'),
+    Tab(text: 'SERVIÇOS'),
+    Tab(text: 'CONTATOS'),
+  ],
+),
         ),
         body: const TabBarView(
           children: [
@@ -110,17 +111,18 @@ class HomePage extends StatelessWidget {
             ContatoPage(),
           ],
         ),
-        bottomNavigationBar: BottomAppBar(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '© 2024 Prefeitura Municipal de Bebedouro',
-              style: TextStyle(color: const Color.fromARGB(228, 0, 0, 0), fontSize: 14),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
+bottomNavigationBar: const BottomAppBar(
+  color: Color.fromARGB(255, 255, 255, 255),
+  child: Padding(
+    padding: EdgeInsets.all(16.0),
+    child: Text(
+      ' 2024 Prefeitura Municipal de Bebedouro',
+      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 16, fontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+    ),
+  ),
+),
+
       ),
     );
   }
