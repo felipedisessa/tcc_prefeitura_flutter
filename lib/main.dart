@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Roboto',
+        useMaterial3: true, // Habilita o Material 3
       ),
       home: const HomePage(),
       routes: {
@@ -89,7 +90,7 @@ class HomePage extends StatelessWidget {
                       ],
                       Expanded(
                         child: SizedBox(
-                          height: 140,
+                          height: 120,
                           child: Image.asset(
                             'assets/banner.png',
                             fit: BoxFit.contain,
@@ -109,22 +110,42 @@ class HomePage extends StatelessWidget {
                 Center(
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: maxContentWidth),
-                    child: const TabBar(
-                      indicatorColor: Color.fromARGB(255, 27, 27, 26),
-                      indicatorSize: TabBarIndicatorSize.label,
-                      labelColor: Color.fromARGB(255, 27, 27, 26),
-                      unselectedLabelColor: Colors.black54,
-                      labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                      tabs: [
-                        Tab(text: 'HOME'),
-                        Tab(text: 'SOBRE'),
-                        Tab(text: 'SERVIÇOS'),
-                        Tab(text: 'CONTATOS'),
-                      ],
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        splashColor: Colors.transparent, // Remove o efeito de splash
+                        highlightColor: Colors.transparent, // Remove o efeito de highlight
+                      ),
+                      child: const TabBar(
+                        indicatorColor:  Color.fromARGB(255, 27, 27, 26),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        labelColor: Color.fromARGB(255, 0, 0, 0), // Cor do texto e ícone quando selecionado
+                        unselectedLabelColor: Color.fromARGB(137, 29, 29, 29), // Cor do texto e ícone quando não selecionado
+                       labelStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12, // Reduzimos o tamanho da fonte para 12
+                        ),
+                        tabs: [
+                          Tab(
+                            icon: Icon(Icons.home, size: 20),
+                            text: 'HOME',
+                          ),
+                          Tab(
+                            icon: Icon(Icons.info, size: 20),
+                            text: 'SOBRE',
+                          ),
+                          Tab(
+                            icon: Icon(Icons.handshake, size: 20),
+                            text: 'SERVIÇOS',
+                          ),
+                          Tab(
+                            icon: Icon(Icons.contact_mail, size: 20),
+                            text: 'CONTATOS',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                // Divider ocupando toda a largura
                 const Divider(
                   color: Color.fromARGB(255, 27, 27, 26),
                   thickness: 2,
@@ -145,13 +166,13 @@ class HomePage extends StatelessWidget {
           ],
         ),
         bottomNavigationBar: const BottomAppBar(
-          color: Colors.white, // Cor do BottomAppBar
+          color: Color.fromARGB(255, 0, 0, 0),
           child: Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
               '2024 Prefeitura Municipal de Bebedouro',
               style: TextStyle(
-                color: Color.fromARGB(255, 0, 0, 0),
+                color: Color.fromARGB(255, 255, 255, 255),
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -336,9 +357,9 @@ class _NoticiasPageState extends State<NoticiasPage> {
                   Column(
                     children: [
                       // Mensagem Chamativa
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: const Text(
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
                           'Últimas Notícias',
                           style: TextStyle(
                             fontSize: 26,
@@ -473,3 +494,5 @@ class _NoticiasPageState extends State<NoticiasPage> {
     );
   }
 }
+
+
