@@ -6,97 +6,94 @@ class NoticiaDetalhesPage extends StatelessWidget {
 
   const NoticiaDetalhesPage({Key? key, required this.noticia}) : super(key: key);
 
+  static const double maxContentWidth = 1200.0; // Largura máxima para o conteúdo
+  static const Color primaryColor = Color.fromARGB(255, 27, 27, 26);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Cor de fundo do Scaffold
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Consistência de cor com o resto do projeto
+        backgroundColor: Colors.white, // Consistência de cor com o resto do projeto
+        elevation: 0, // Remove a sombra sob o AppBar
         title: Text(
           noticia.name,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: primaryColor,
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Color.fromARGB(255, 0, 0, 0)), // Define a cor do ícone de volta
+        iconTheme: const IconThemeData(color: primaryColor), // Define a cor do ícone de volta
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-          child: Center(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 1200), // Centraliza e define largura máxima
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 3,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: maxContentWidth), // Centraliza e define largura máxima
+            padding: const EdgeInsets.all(16.0), // Espaçamento consistente
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Imagem destacada
+                if (noticia.imageUrl != null)
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                    child: noticia.imageUrl != null
-                        ? Image.network(
-                            noticia.imageUrl!,
-                            fit: BoxFit.contain,
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              color: Colors.grey[300],
-                              child: const Icon(
-                                Icons.broken_image,
-                                color: Colors.grey,
-                                size: 50,
-                              ),
-                            ),
-                          )
-                        : Container(
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.image,
-                              color: Colors.grey,
-                              size: 100,
-                            ),
-                          ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          noticia.name,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Image.network(
+                      noticia.imageUrl!,
+                      width: double.infinity,
+                      height: 300,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                          size: 50,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          noticia.description,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ],
+                      ),
+                    ),
+                  )
+                else
+                  Container(
+                    width: double.infinity,
+                    height: 300,
+                    color: Colors.grey[300],
+                    child: const Icon(
+                      Icons.image,
+                      color: Colors.grey,
+                      size: 100,
                     ),
                   ),
-                ],
-              ),
+                const SizedBox(height: 20),
+                // Título da notícia
+                Text(
+                  noticia.name,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Divider
+                const Divider(
+                  color: primaryColor,
+                  thickness: 2,
+                  height: 0,
+                ),
+                const SizedBox(height: 20),
+                // Descrição
+                Text(
+                  noticia.description,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.black87,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+              ],
             ),
           ),
         ),
