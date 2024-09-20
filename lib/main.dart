@@ -36,6 +36,8 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
+  static const double maxContentWidth = 1200.0; // Maximum width for content
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -44,64 +46,77 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           toolbarHeight: 150,
           backgroundColor: Colors.white,
-          title: LayoutBuilder(
-            builder: (context, constraints) {
-              final isWideScreen = constraints.maxWidth > 800;
+          title: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: maxContentWidth),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isWideScreen = constraints.maxWidth > 800;
 
-              return Row(
-                children: [
-                  if (isWideScreen) ...[
-                    Column(
-                       crossAxisAlignment: CrossAxisAlignment.center, 
-                      children: [
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (isWideScreen) ...[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/logo.png',
+                              height: 80,
+                            ),
+                            const SizedBox(height: 5),
+                            const Text(
+                              'Assistência Social',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 27, 27, 26),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 10),
+                      ] else ...[
                         Image.asset(
                           'assets/logo.png',
-                          height: 80,
-                        ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Assistência Social',
-                          style: TextStyle(
-                          
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 27, 27, 26),
-                          ),
+                          height: 40,
                         ),
                       ],
-                    ),
-                    const SizedBox(width: 10),
-                  ] else ...[
-                    Image.asset(
-                      'assets/logo.png',
-                      height: 40,
-                    ),
-                  ],
-                  Expanded(
-                    child:SizedBox(
-                      height: 100,
-                      child: Image.asset(
-                        'assets/banner.png',
-                        fit: BoxFit.contain,
+                      Expanded(
+                        child: SizedBox(
+                          height: 100,
+                          child: Image.asset(
+                            'assets/banner.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              );
-            },
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
-      bottom: const TabBar(
-  indicatorColor: Color.fromARGB(255, 27, 27, 26),
-  labelColor: Color.fromARGB(255, 27, 27, 26),
-  unselectedLabelColor: Colors.black54,
-  labelStyle: TextStyle(fontWeight: FontWeight.bold),
-  tabs: [
-    Tab(text: 'HOME'),
-    Tab(text: 'SOBRE'),
-    Tab(text: 'SERVIÇOS'),
-    Tab(text: 'CONTATOS'),
-  ],
-),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Center(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: maxContentWidth),
+                child: const TabBar(
+                  indicatorColor: Color.fromARGB(255, 27, 27, 26),
+                  labelColor: Color.fromARGB(255, 27, 27, 26),
+                  unselectedLabelColor: Colors.black54,
+                  labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                  tabs: [
+                    Tab(text: 'HOME'),
+                    Tab(text: 'SOBRE'),
+                    Tab(text: 'SERVIÇOS'),
+                    Tab(text: 'CONTATOS'),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
         body: const TabBarView(
           children: [
@@ -111,18 +126,21 @@ class HomePage extends StatelessWidget {
             ContatoPage(),
           ],
         ),
-bottomNavigationBar: const BottomAppBar(
-  color: Color.fromARGB(255, 255, 255, 255),
-  child: Padding(
-    padding: EdgeInsets.all(16.0),
-    child: Text(
-      ' 2024 Prefeitura Municipal de Bebedouro',
-      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 16, fontWeight: FontWeight.bold),
-      textAlign: TextAlign.center,
-    ),
-  ),
-),
-
+        bottomNavigationBar: const BottomAppBar(
+          color: Color.fromARGB(255, 255, 255, 255),
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              ' 2024 Prefeitura Municipal de Bebedouro',
+              style: TextStyle(
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -137,6 +155,8 @@ class NoticiasPage extends StatefulWidget {
 
 class _NoticiasPageState extends State<NoticiasPage> {
   late Future<List<Noticia>> _futureNoticias;
+
+  static const double maxContentWidth = 1200.0; // Maximum width for content
 
   @override
   void initState() {
@@ -178,62 +198,64 @@ class _NoticiasPageState extends State<NoticiasPage> {
                   // Carousel de Imagens
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                    child: Container(
-                      constraints: const BoxConstraints(maxWidth: 1200),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: CarouselSlider(
-                          options: CarouselOptions(
-                            height: MediaQuery.of(context).size.height * 0.25,
-                            autoPlay: true,
-                            enlargeCenterPage: true,
-                            aspectRatio: 16 / 9,
-                            viewportFraction: 0.8,
-                            autoPlayInterval: const Duration(seconds: 5),
-                            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                    child: Center(
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: maxContentWidth),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: CarouselSlider(
+                            options: CarouselOptions(
+                              height: MediaQuery.of(context).size.height * 0.25,
+                              autoPlay: true,
+                              enlargeCenterPage: true,
+                              aspectRatio: 16 / 9,
+                              viewportFraction: 0.8,
+                              autoPlayInterval: const Duration(seconds: 5),
+                              autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                            ),
+                            items: noticias.map((noticia) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return Stack(
+                                    children: [
+                                      if (noticia.imageUrl != null)
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(15),
+                                          child: Image.network(
+                                            noticia.imageUrl!,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: MediaQuery.of(context).size.height * 0.25,
+                                            errorBuilder: (context, error, stackTrace) => Container(
+                                              color: Colors.grey[300],
+                                              child: const Icon(Icons.broken_image, color: Colors.grey),
+                                            ),
+                                          ),
+                                        ),
+                                      Positioned(
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          color: Colors.black.withOpacity(0.6),
+                                          child: Text(
+                                            noticia.name,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }).toList(),
                           ),
-                          items: noticias.map((noticia) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Stack(
-                                  children: [
-                                    if (noticia.imageUrl != null)
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(15),
-                                        child: Image.network(
-                                          noticia.imageUrl!,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: MediaQuery.of(context).size.height * 0.25,
-                                          errorBuilder: (context, error, stackTrace) => Container(
-                                            color: Colors.grey[300],
-                                            child: const Icon(Icons.broken_image, color: Colors.grey),
-                                          ),
-                                        ),
-                                      ),
-                                    Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      right: 0,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        color: Colors.black.withOpacity(0.6),
-                                        child: Text(
-                                          noticia.name,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          }).toList(),
                         ),
                       ),
                     ),
@@ -262,16 +284,18 @@ class _NoticiasPageState extends State<NoticiasPage> {
                         // Grid de Notícias
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            int columns = 1; // Define duas colunas como padrão para mobile
+                            int columns = 1; // Default to 1 column for mobile
                             if (constraints.maxWidth > 1200) {
                               columns = 4;
                             } else if (constraints.maxWidth > 800) {
                               columns = 3;
+                            } else if (constraints.maxWidth > 600) {
+                              columns = 2;
                             }
 
                             return Center(
                               child: Container(
-                                constraints: const BoxConstraints(maxWidth: 1200),
+                                constraints: const BoxConstraints(maxWidth: maxContentWidth),
                                 child: GridView.builder(
                                   padding: const EdgeInsets.all(10),
                                   shrinkWrap: true,
