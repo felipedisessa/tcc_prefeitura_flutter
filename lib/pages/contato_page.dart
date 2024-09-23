@@ -51,17 +51,52 @@ class ContatoPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Texto descritivo
                 const Text(
-                  'Se você precisa de mais informações sobre os serviços da Secretaria Municipal de Promoção e Assistência Social de Bebedouro, entre em contato conosco pelos canais abaixo:\n\n'
-                  '**Endereço**: Av. Pedro Cavalini, 1403, Centro - Bebedouro/SP\n\n'
-                  '**Telefone**: (17) 3343-3300\n\n'
-                  '**E-mail**: assistenciasocial@bebedouro.sp.gov.br',
+                  'Se você precisa de mais informações sobre os serviços da Secretaria Municipal de Promoção e Assistência Social de Bebedouro, entre em contato conosco pelos canais abaixo:',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.black87,
                     height: 1.5,
                   ),
-                  textAlign: TextAlign.justify,
                 ),
+                const SizedBox(height: 20),
+                // Contato DMPAS
+                const Text(
+                  'Departamento Municipal de Promoção e Assistência Social (DMPAS)',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  '**Endereço:** Avenida Oswaldo Perrone, nº 489, Jardim Progresso\n\n'
+                  '**Telefones:** (17) 3342-1202 / 3342-1252\n\n'
+                  '**Horário de atendimento:**\n'
+                  'DMPAS: de segunda à sexta-feira das 8h às 17h\n'
+                  'CRAS/CREAS/CRAM/Centro Dia: de segunda à sexta-feira das 8h às 17h\n\n'
+                  '**E-mail:** promocaosocial@bebedouro.sp.gov.br',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black87,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                // Outros Contatos (se necessário, você pode adicionar mais informações aqui)
+                // Exemplo:
+                /*
+                const Text(
+                  'Outros Contatos',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Adicione outros contatos aqui
+                */
               ],
             ),
           ),

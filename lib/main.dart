@@ -122,7 +122,7 @@ class HomePage extends StatelessWidget {
                         unselectedLabelColor: Color.fromARGB(137, 29, 29, 29), // Cor do texto e ícone quando não selecionado
                        labelStyle: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 12, // Reduzimos o tamanho da fonte para 12
+                          fontSize: 12,
                         ),
                         tabs: [
                           Tab(
@@ -170,7 +170,7 @@ class HomePage extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
-              '2024 Prefeitura Municipal de Bebedouro',
+              'Copyright © 2024 Prefeitura Municipal de Bebedouro. Todos os direitos reservados.',
               style: TextStyle(
                 color: Color.fromARGB(255, 255, 255, 255),
                 fontSize: 16,
