@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'noticia.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'pages/sobre_page.dart';
 import 'pages/servicos_page.dart';
 import 'pages/contato_page.dart';
 import 'pages/noticia_detalhes_page.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart'; // Import para o indicador de páginas
+import 'dart:async'; // Import para o Timer
 
 void main() {
   runApp(const MyApp());
@@ -116,11 +117,11 @@ class HomePage extends StatelessWidget {
                         highlightColor: Colors.transparent, // Remove o efeito de highlight
                       ),
                       child: const TabBar(
-                        indicatorColor:  Color.fromARGB(255, 27, 27, 26),
+                        indicatorColor: Color.fromARGB(255, 27, 27, 26),
                         indicatorSize: TabBarIndicatorSize.tab,
                         labelColor: Color.fromARGB(255, 0, 0, 0), // Cor do texto e ícone quando selecionado
                         unselectedLabelColor: Color.fromARGB(137, 29, 29, 29), // Cor do texto e ícone quando não selecionado
-                       labelStyle: TextStyle(
+                        labelStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -168,7 +169,7 @@ class HomePage extends StatelessWidget {
         bottomNavigationBar: const BottomAppBar(
           color: Color.fromARGB(255, 0, 0, 0),
           child: Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(8.0),
             child: Text(
               'Copyright © 2024 Prefeitura Municipal de Bebedouro. Todos os direitos reservados.',
               style: TextStyle(
@@ -201,19 +202,42 @@ class _NoticiasPageState extends State<NoticiasPage> {
   String _searchQuery = '';
   List<Noticia> _allNoticias = [];
   List<Noticia> _filteredNoticias = [];
+  List<Noticia> _slideNoticias = []; // Lista para os slides
+  final PageController _pageController = PageController(); // Controlador para o PageView
+  Timer? _timer; // Timer para o auto-scroll
 
   @override
   void initState() {
     super.initState();
     _futureNoticias = fetchNoticias();
     _searchController.addListener(_onSearchChanged);
+    _startAutoScroll(); // Inicia o auto-scroll
   }
 
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _pageController.dispose(); // Dispose do controlador
+    _timer?.cancel(); // Cancela o timer
     super.dispose();
+  }
+
+  // Método para iniciar o auto-scroll
+  void _startAutoScroll() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+      if (_pageController.hasClients && _slideNoticias.isNotEmpty) {
+        int nextPage = _pageController.page!.round() + 1;
+        if (nextPage >= _slideNoticias.length) {
+          nextPage = 0;
+        }
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   Future<List<Noticia>> fetchNoticias() async {
@@ -223,6 +247,8 @@ class _NoticiasPageState extends State<NoticiasPage> {
         List<dynamic> data = response.data;
         _allNoticias = data.map((json) => Noticia.fromJson(json)).toList();
         _filteredNoticias = _allNoticias;
+        // Inicializa _slideNoticias com todas as notícias que têm imagem
+        _slideNoticias = _allNoticias.where((noticia) => noticia.imageUrl != null).toList();
         return _allNoticias;
       } else {
         throw Exception('Failed to load noticias');
@@ -239,6 +265,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
         return noticia.name.toLowerCase().contains(_searchQuery) ||
             noticia.description.toLowerCase().contains(_searchQuery);
       }).toList();
+      // Não alteramos _slideNoticias; o carrossel permanece o mesmo
     });
   }
 
@@ -287,68 +314,139 @@ class _NoticiasPageState extends State<NoticiasPage> {
                       ),
                     ),
                   ),
-                  // Carousel de Imagens
-                  if (_filteredNoticias.isNotEmpty)
+                  // Carrossel de Imagens
+                  if (_slideNoticias.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                       child: Center(
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: maxContentWidth),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: CarouselSlider(
-                              options: CarouselOptions(
-                                height: MediaQuery.of(context).size.height * 0.25,
-                                autoPlay: true,
-                                enlargeCenterPage: true,
-                                aspectRatio: 16 / 9,
-                                viewportFraction: 0.8,
-                                autoPlayInterval: const Duration(seconds: 5),
-                                autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.3,
+                                    child: PageView.builder(
+                                      controller: _pageController,
+                                      itemCount: _slideNoticias.length,
+                                      itemBuilder: (context, index) {
+                                        final noticia = _slideNoticias[index];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => NoticiaDetalhesPage(noticia: noticia),
+                                              ),
+                                            );
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              if (noticia.imageUrl != null)
+                                                ClipRRect(
+                                                  borderRadius: BorderRadius.circular(15),
+                                                  child: Image.network(
+                                                    noticia.imageUrl!,
+                                                    fit: BoxFit.cover,
+                                                    width: double.infinity,
+                                                    height: MediaQuery.of(context).size.height * 0.3,
+                                                    errorBuilder: (context, error, stackTrace) => Container(
+                                                      color: Colors.grey[300],
+                                                      child: const Icon(Icons.broken_image, color: Colors.grey),
+                                                    ),
+                                                  ),
+                                                ),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(15),
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                    colors: [
+                                                      Colors.transparent,
+                                                      Colors.black.withOpacity(0.7),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                bottom: 20,
+                                                left: 20,
+                                                right: 20,
+                                                child: Text(
+                                                  noticia.name,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                  ),
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  // Botões para passar/voltar
+                                  Positioned(
+                                    top: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                                      onPressed: () {
+                                        if (_pageController.hasClients) {
+                                          int prevPage = _pageController.page!.round() - 1;
+                                          if (prevPage < 0) {
+                                            prevPage = _slideNoticias.length - 1;
+                                          }
+                                          _pageController.animateToPage(
+                                            prevPage,
+                                            duration: const Duration(milliseconds: 500),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    bottom: 0,
+                                    right: 0,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                                      onPressed: () {
+                                        if (_pageController.hasClients) {
+                                          int nextPage = _pageController.page!.round() + 1;
+                                          if (nextPage >= _slideNoticias.length) {
+                                            nextPage = 0;
+                                          }
+                                          _pageController.animateToPage(
+                                            nextPage,
+                                            duration: const Duration(milliseconds: 500),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                              items: _filteredNoticias.map((noticia) {
-                                return Builder(
-                                  builder: (BuildContext context) {
-                                    return Stack(
-                                      children: [
-                                        if (noticia.imageUrl != null)
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(15),
-                                            child: Image.network(
-                                              noticia.imageUrl!,
-                                              fit: BoxFit.cover,
-                                              width: double.infinity,
-                                              height: MediaQuery.of(context).size.height * 0.25,
-                                              errorBuilder: (context, error, stackTrace) => Container(
-                                                color: Colors.grey[300],
-                                                child: const Icon(Icons.broken_image, color: Colors.grey),
-                                              ),
-                                            ),
-                                          ),
-                                        Positioned(
-                                          bottom: 0,
-                                          left: 0,
-                                          right: 0,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8.0),
-                                            color: Colors.black.withOpacity(0.6),
-                                            child: Text(
-                                              noticia.name,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }).toList(),
-                            ),
+                              const SizedBox(height: 10),
+                              SmoothPageIndicator(
+                                controller: _pageController,
+                                count: _slideNoticias.length,
+                                effect: const ExpandingDotsEffect(
+                                  dotHeight: 8,
+                                  dotWidth: 8,
+                                  activeDotColor: Color.fromARGB(255, 27, 27, 26),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -357,8 +455,19 @@ class _NoticiasPageState extends State<NoticiasPage> {
                   Column(
                     children: [
                       // Mensagem Chamativa
+                      
+                      const SizedBox(height: 20),
+                      // Divider ocupando toda a largura
+                      const Divider(
+                        color: Color.fromARGB(255, 27, 27, 26),
+                        thickness: 2,
+                        height: 0,
+                        indent: 0,
+                        endIndent: 0,
+                      ),
                       const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                      
                         child: Text(
                           'Últimas Notícias',
                           style: TextStyle(
@@ -368,15 +477,6 @@ class _NoticiasPageState extends State<NoticiasPage> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Divider ocupando toda a largura
-                      const Divider(
-                        color: Color.fromARGB(255, 27, 27, 26),
-                        thickness: 2,
-                        height: 0,
-                        indent: 0,
-                        endIndent: 0,
                       ),
                       const SizedBox(height: 20),
                       // Grid de Notícias
@@ -405,7 +505,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                           crossAxisCount: columns,
                                           crossAxisSpacing: 16,
                                           mainAxisSpacing: 16,
-                                          childAspectRatio: 1.0,
+                                          childAspectRatio: 0.8, // Ajustado para melhorar a proporção
                                         ),
                                         itemCount: _filteredNoticias.length,
                                         itemBuilder: (context, index) {
@@ -437,7 +537,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                                         noticia.imageUrl!,
                                                         fit: BoxFit.cover,
                                                         width: double.infinity,
-                                                        height: 120,
+                                                        height: 150, // Ajustado para aumentar a altura da imagem
                                                         errorBuilder: (context, error, stackTrace) => Container(
                                                           color: Colors.grey[300],
                                                           child: const Icon(Icons.broken_image, color: Colors.grey),
@@ -494,5 +594,3 @@ class _NoticiasPageState extends State<NoticiasPage> {
     );
   }
 }
-
-

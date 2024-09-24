@@ -26,110 +26,185 @@ class SobrePage extends StatelessWidget {
         child: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: maxContentWidth),
-            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Título da página
-                const Text(
-                  'Assistência Social de Bebedouro',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                // Divider
-                const Divider(
-                  color: primaryColor,
-                  thickness: 2,
-                  height: 0,
-                ),
-                const SizedBox(height: 20),
-                // Imagem destacada
-                Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: Image.asset(
-                      'assets/sobre.png',
-                      height: 300,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                // Imagem de cabeçalho
+                Stack(
+                  children: [
+                    Container(
+                      height: 250,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/sobre.png'), // Substitua pela imagem desejada
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                    ),
+                    const Positioned(
+                      bottom: 20,
+                      left: 20,
+                      child: Text(
+                        'Assistência Social de Bebedouro',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
-                // Texto descritivo
-                const Text(
-                  'A Política Pública de Assistência Social é um direito do cidadão e dever do Estado, organizada de forma descentralizada e participativa, visando prover proteção à vida, reduzir danos e prevenir riscos sociais. O Departamento Municipal de Promoção e Assistência Social (DMPAS) é o órgão responsável pela gestão dessa política em Bebedouro/SP, atuando na promoção de serviços, programas, projetos e benefícios para melhorar a qualidade de vida das pessoas em situação de vulnerabilidade social.',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black87,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.justify,
-                ),
-                const SizedBox(height: 20),
-                // Lista de Funções Essenciais
-                const Text(
-                  'Funções Essenciais do Órgão Gestor:',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  '1. Gestão do Sistema Municipal de Assistência Social\n'
-                  '2. Coordenação da Proteção Social Básica\n'
-                  '3. Coordenação da Proteção Social Especial\n'
-                  '4. Planejamento e Orçamento\n'
-                  '5. Gerenciamento do Fundo Municipal de Assistência Social\n'
-                  '6. Gerenciamento dos Sistemas de Informação\n'
-                  '7. Monitoramento e Controle da Execução dos Serviços\n'
-                  '8. Controle da Rede Socioassistencial\n'
-                  '9. Gestão do Trabalho\n'
-                  '10. Apoio às Instâncias de Deliberação\n'
-                  '11. Vigilância Socioassistencial',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black87,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Contato
-                const Text(
-                  'Contato:',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Endereço: Avenida Oswaldo Perrone, nº 489, Jardim Progresso\n'
-                  'Telefones: (17) 3342-1202 / 3342-1252\n'
-                  'Horário de Atendimento: Segunda a sexta-feira, das 8h às 17h\n'
-                  'E-mail: promocaosocial@bebedouro.sp.gov.br',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black87,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 30),
-                // Ícone do Facebook
-                Center(
-                  child: IconButton(
-                    icon: const Icon(Icons.facebook),
-                    color: Colors.blueAccent,
-                    iconSize: 50,
-                    onPressed: _launchFacebook,
+                // Conteúdo principal
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Título da seção
+                      const Text(
+                        'Sobre Nós',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Texto descritivo
+                      const Text(
+                        'A Política Pública de Assistência Social é um direito do cidadão e dever do Estado, organizada de forma descentralizada e participativa, visando prover proteção à vida, reduzir danos e prevenir riscos sociais. O Departamento Municipal de Promoção e Assistência Social (DMPAS) é o órgão responsável pela gestão dessa política em Bebedouro/SP, atuando na promoção de serviços, programas, projetos e benefícios para melhorar a qualidade de vida das pessoas em situação de vulnerabilidade social.',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black87,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.justify,
+                      ),
+                      const SizedBox(height: 20),
+                      // Lista de Funções Essenciais
+                      const Text(
+                        'Funções Essenciais do Órgão Gestor',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ListView(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: const [
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Gestão do Sistema Municipal de Assistência Social'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Coordenação da Proteção Social Básica'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Coordenação da Proteção Social Especial'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Planejamento e Orçamento'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Gerenciamento do Fundo Municipal de Assistência Social'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Gerenciamento dos Sistemas de Informação'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Monitoramento e Controle da Execução dos Serviços'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Controle da Rede Socioassistencial'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Gestão do Trabalho'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Apoio às Instâncias de Deliberação'),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.check_circle_outline, color: primaryColor),
+                            title: Text('Vigilância Socioassistencial'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      // Contato
+                      const Text(
+                        'Contato',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                        child: const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.location_on, color: primaryColor),
+                                title: Text('Avenida Oswaldo Perrone, nº 489, Jardim Progresso'),
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.phone, color: primaryColor),
+                                title: Text('(17) 3342-1202 / 3342-1252'),
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.access_time, color: primaryColor),
+                                title: Text('Segunda a sexta-feira, das 8h às 17h'),
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.email, color: primaryColor),
+                                title: Text('promocaosocial@bebedouro.sp.gov.br'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      // Ícones de Redes Sociais
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.facebook),
+                              color: Colors.blueAccent,
+                              iconSize: 40,
+                              onPressed: _launchFacebook,
+                            ),
+                            // Adicione outros ícones de redes sociais aqui, se desejar
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
               ],
