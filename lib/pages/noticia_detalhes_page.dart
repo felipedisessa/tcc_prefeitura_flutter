@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Certifique-se de adicionar o intl no pubspec.yaml
 import 'package:social_assistance/noticia.dart';
 
 class NoticiaDetalhesPage extends StatelessWidget {
@@ -12,10 +13,10 @@ class NoticiaDetalhesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Cor de fundo do Scaffold
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white, // Consistência de cor com o resto do projeto
-        elevation: 0, // Remove a sombra sob o AppBar
+        backgroundColor: Colors.white,
+        elevation: 0,
         title: Text(
           noticia.name,
           style: const TextStyle(
@@ -25,13 +26,13 @@ class NoticiaDetalhesPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: primaryColor), // Define a cor do ícone de volta
+        iconTheme: const IconThemeData(color: primaryColor),
       ),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
-            constraints: const BoxConstraints(maxWidth: maxContentWidth), // Centraliza e define largura máxima
-            padding: const EdgeInsets.all(16.0), // Espaçamento consistente
+            constraints: const BoxConstraints(maxWidth: maxContentWidth),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -75,6 +76,16 @@ class NoticiaDetalhesPage extends StatelessWidget {
                     color: primaryColor,
                   ),
                 ),
+                const SizedBox(height: 10),
+                // Data de criação
+                if (noticia.createdAt != null)
+                  Text(
+                    DateFormat('dd/MM/yyyy').format(noticia.createdAt!),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
                 const SizedBox(height: 10),
                 // Divider
                 const Divider(
