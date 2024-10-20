@@ -240,23 +240,40 @@ class _NoticiasPageState extends State<NoticiasPage> {
     });
   }
 
-  Future<List<Noticia>> fetchNoticias() async {
-    try {
-      final response = await Dio().get('http://127.0.0.1:8000/noticias');
-      if (response.statusCode == 200) {
-        List<dynamic> data = response.data;
-        _allNoticias = data.map((json) => Noticia.fromJson(json)).toList();
-        _filteredNoticias = _allNoticias;
-        // Inicializa _slideNoticias com todas as notícias que têm imagem
-        _slideNoticias = _allNoticias.where((noticia) => noticia.imageUrl != null).toList();
-        return _allNoticias;
-      } else {
-        throw Exception('Failed to load noticias');
-      }
-    } catch (e) {
-      throw Exception('Erro ao carregar notícias: $e');
+ Future<List<Noticia>> fetchNoticias() async {
+  try {
+    final response = await Dio().get('http://127.0.0.1:8000/noticias');
+    if (response.statusCode == 200) {
+      List<dynamic> data = response.data;
+      
+      // Mapeia os dados para objetos Noticia
+      _allNoticias = data.map((json) => Noticia.fromJson(json)).toList();
+
+      // Ordena as notícias pelo campo 'created_at' para exibir as mais recentes primeiro
+    _allNoticias.sort((a, b) {
+  // Verifica se 'createdAt' de 'a' ou 'b' são nulos
+    if (a.createdAt == null && b.createdAt == null) return 0;
+    if (a.createdAt == null) return 1; // Notícia 'a' sem data vai para o final
+    if (b.createdAt == null) return -1; // Notícia 'b' sem data vai para o final
+
+  // Se nenhum for nulo, compara os dois DateTime normalmente
+  return b.createdAt!.compareTo(a.createdAt!);
+});
+
+      _filteredNoticias = _allNoticias;
+
+      // Inicializa _slideNoticias com todas as notícias que têm imagem
+      _slideNoticias = _allNoticias.where((noticia) => noticia.imageUrl != null).toList();
+
+      return _allNoticias;
+    } else {
+      throw Exception('Failed to load noticias');
     }
+  } catch (e) {
+    throw Exception('Erro ao carregar notícias: $e');
   }
+}
+
 
   void _onSearchChanged() {
     setState(() {
