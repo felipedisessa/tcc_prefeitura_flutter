@@ -337,7 +337,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                       child: Center(
                         child: Container(
-                          constraints: const BoxConstraints(maxWidth: maxContentWidth),
+                          constraints: const BoxConstraints(maxWidth: 800),
                           child: Column(
                             children: [
                               Stack(
